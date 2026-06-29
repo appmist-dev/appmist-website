@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="564" height="168" viewBox="0 0 564 168" role="img" aria-labelledby="title desc">
+  <title id="title">Get it on Google Play</title>
+  <desc id="desc">Black Google Play badge with the Google Play triangle and text.</desc>
+  <rect width="564" height="168" rx="20" fill="#000000"/>
+  <g transform="translate(34 36)">
+    <path d="M0 0 64 48 0 96V0Z" fill="#00D2FF"/>
+    <path d="M64 48 80 35c5-4 5-10 0-14L64 10 38 29Z" fill="#00E676"/>
+    <path d="M64 48 80 61c5 4 5 10 0 14L64 86 38 67Z" fill="#FFEA00"/>
+    <path d="M0 0 38 29 38 67 0 96V0Z" fill="#FF3D00"/>
+  </g>
+  <text x="138" y="66" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="28" letter-spacing="2">GET IT ON</text>
+  <text x="138" y="120" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="54" font-weight="700">Google Play</text>
+</svg>
