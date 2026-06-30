@@ -158,6 +158,7 @@
     var isExpanded = trigger.getAttribute("aria-expanded") === "true";
     var panelId = trigger.getAttribute("aria-controls");
     var panel = panelId ? document.getElementById(panelId) : null;
+    var faqItem = trigger.closest(".faq-item");
 
     if (!panel) {
       return;
@@ -166,17 +167,26 @@
     faqTriggers.forEach(function (item) {
       var itemPanelId = item.getAttribute("aria-controls");
       var itemPanel = itemPanelId ? document.getElementById(itemPanelId) : null;
+      var itemFaq = item.closest(".faq-item");
 
       item.setAttribute("aria-expanded", "false");
 
       if (itemPanel) {
-        itemPanel.hidden = true;
+        itemPanel.setAttribute("aria-hidden", "true");
+      }
+
+      if (itemFaq) {
+        itemFaq.classList.remove("is-open");
       }
     });
 
     if (!isExpanded) {
       trigger.setAttribute("aria-expanded", "true");
-      panel.hidden = false;
+      panel.setAttribute("aria-hidden", "false");
+
+      if (faqItem) {
+        faqItem.classList.add("is-open");
+      }
     }
   }
 
@@ -309,6 +319,15 @@
     setCurrentYear();
     updateHeaderState();
     setupReveal();
+    faqTriggers.forEach(function (trigger) {
+      var panelId = trigger.getAttribute("aria-controls");
+      var panel = panelId ? document.getElementById(panelId) : null;
+      var expanded = trigger.getAttribute("aria-expanded") === "true";
+
+      if (panel) {
+        panel.setAttribute("aria-hidden", expanded ? "false" : "true");
+      }
+    });
     bindEvents();
   }
 

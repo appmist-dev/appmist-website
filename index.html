@@ -186,11 +186,33 @@
 
           <div class="hero__visual" data-reveal="left">
             <div class="hero-card glass-panel">
-              <div class="hero-card__label">Current app</div>
-              <div class="hero-card__headline">TimeUp Lock</div>
+              <div class="hero-card__top">
+                <div class="hero-card__identity">
+                  <img
+                    class="hero-card__app-icon"
+                    src="assets/icons/timeup-lock-icon-web.png"
+                    alt="TimeUp Lock app icon"
+                    width="256"
+                    height="256"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div class="hero-card__identity-copy">
+                    <div class="hero-card__label">Current app</div>
+                    <div class="hero-card__headline">TimeUp Lock</div>
+                  </div>
+                </div>
+                <span class="hero-card__badge">Privacy-first</span>
+              </div>
               <p class="hero-card__copy">
-                Set a timer before handing over your phone. When time is up, the device locks automatically.
+                Set a timer before handing over your phone. When time is up, the device locks
+                automatically.
               </p>
+              <div class="hero-card__signals" aria-label="TimeUp Lock highlights">
+                <span>Quick presets</span>
+                <span>Auto lock</span>
+                <span>Parent protected</span>
+              </div>
               <div class="hero-card__metrics">
                 <article class="metric-card">
                   <span class="metric-card__value">5 min</span>
@@ -454,7 +476,7 @@
             <p class="eyebrow eyebrow--light">Why TimeUp Lock</p>
             <h2 id="comparison-title">A simpler way to avoid screen-time arguments</h2>
             <p>
-              Children often ask for “just five more minutes.” TimeUp Lock helps avoid those difficult
+              Children often ask for "just five more minutes." TimeUp Lock helps avoid those difficult
               conversations by automatically locking the phone when the agreed time ends.
             </p>
           </div>
@@ -520,14 +542,19 @@
               <button
                 class="screenshot-button"
                 type="button"
+                aria-label="Open screenshot showing quick timer presets and one-tap timer setup"
                 data-screenshot-modal-trigger
                 data-screenshot-src="assets/screenshots/timeup-lock-story-2.png"
                 data-screenshot-alt="TimeUp Lock screenshot showing quick timer presets and one-tap timer setup."
               >
                 <span class="device device--gallery" aria-hidden="true">
                   <span class="device__frame">
-                    <span class="device__notch"></span>
+                    <span class="device__speaker device__speaker--gallery"></span>
+                    <span class="device__camera device__camera--gallery"></span>
+                    <span class="device__side device__side--volume"></span>
+                    <span class="device__side device__side--power"></span>
                     <span class="device__screen">
+                      <span class="device__reflection"></span>
                       <img
                         class="device__image"
                         src="assets/screenshots/timeup-lock-story-2.png"
@@ -547,14 +574,19 @@
               <button
                 class="screenshot-button"
                 type="button"
+                aria-label="Open screenshot showing the custom timer picker while the timer keeps running"
                 data-screenshot-modal-trigger
                 data-screenshot-src="assets/screenshots/timeup-lock-story-3.png"
                 data-screenshot-alt="TimeUp Lock screenshot showing the custom timer picker while the timer keeps running."
               >
                 <span class="device device--gallery" aria-hidden="true">
                   <span class="device__frame">
-                    <span class="device__notch"></span>
+                    <span class="device__speaker device__speaker--gallery"></span>
+                    <span class="device__camera device__camera--gallery"></span>
+                    <span class="device__side device__side--volume"></span>
+                    <span class="device__side device__side--power"></span>
                     <span class="device__screen">
+                      <span class="device__reflection"></span>
                       <img
                         class="device__image"
                         src="assets/screenshots/timeup-lock-story-3.png"
@@ -574,14 +606,19 @@
               <button
                 class="screenshot-button"
                 type="button"
+                aria-label="Open screenshot showing the phone locked screen after time is up"
                 data-screenshot-modal-trigger
                 data-screenshot-src="assets/screenshots/timeup-lock-story-4.png"
                 data-screenshot-alt="TimeUp Lock screenshot showing the phone locked screen after time is up."
               >
                 <span class="device device--gallery" aria-hidden="true">
                   <span class="device__frame">
-                    <span class="device__notch"></span>
+                    <span class="device__speaker device__speaker--gallery"></span>
+                    <span class="device__camera device__camera--gallery"></span>
+                    <span class="device__side device__side--volume"></span>
+                    <span class="device__side device__side--power"></span>
                     <span class="device__screen">
+                      <span class="device__reflection"></span>
                       <img
                         class="device__image"
                         src="assets/screenshots/timeup-lock-story-4.png"
@@ -601,14 +638,19 @@
               <button
                 class="screenshot-button"
                 type="button"
+                aria-label="Open screenshot highlighting private and safe screen-time handoff with no data collected"
                 data-screenshot-modal-trigger
                 data-screenshot-src="assets/screenshots/timeup-lock-story-7.png"
                 data-screenshot-alt="TimeUp Lock screenshot highlighting private and safe screen-time handoff with no data collected."
               >
                 <span class="device device--gallery" aria-hidden="true">
                   <span class="device__frame">
-                    <span class="device__notch"></span>
+                    <span class="device__speaker device__speaker--gallery"></span>
+                    <span class="device__camera device__camera--gallery"></span>
+                    <span class="device__side device__side--volume"></span>
+                    <span class="device__side device__side--power"></span>
                     <span class="device__screen">
+                      <span class="device__reflection"></span>
                       <img
                         class="device__image"
                         src="assets/screenshots/timeup-lock-story-7.png"
@@ -668,7 +710,7 @@
             <p class="eyebrow eyebrow--light">Coming Soon</p>
             <h2 id="coming-soon-title">More apps are on the way</h2>
             <p>
-              We’re working on more lightweight Android apps that simplify everyday life. Stay tuned
+              We're working on more lightweight Android apps that simplify everyday life. Stay tuned
               for future releases.
             </p>
           </div>
@@ -706,7 +748,7 @@
           </div>
 
           <div class="faq-list" data-reveal="left">
-            <article class="faq-item">
+            <article class="faq-item is-open">
               <h3>
                 <button
                   class="faq-trigger"
@@ -718,11 +760,13 @@
                   <span class="faq-icon" aria-hidden="true"></span>
                 </button>
               </h3>
-              <div class="faq-panel" id="faq-panel-1">
-                <p>
-                  Accessibility Service is used only to automatically lock the screen when the timer
-                  expires. It is never used to collect personal information or monitor activity.
-                </p>
+              <div class="faq-panel" id="faq-panel-1" aria-hidden="false">
+                <div class="faq-panel__inner">
+                  <p>
+                    Accessibility Service is used only to automatically lock the screen when the timer
+                    expires. It is never used to collect personal information or monitor activity.
+                  </p>
+                </div>
               </div>
             </article>
 
@@ -738,8 +782,10 @@
                   <span class="faq-icon" aria-hidden="true"></span>
                 </button>
               </h3>
-              <div class="faq-panel" id="faq-panel-2" hidden>
-                <p>No. TimeUp Lock does not collect, store, or sell personal information.</p>
+              <div class="faq-panel" id="faq-panel-2" aria-hidden="true">
+                <div class="faq-panel__inner">
+                  <p>No. TimeUp Lock does not collect, store, or sell personal information.</p>
+                </div>
               </div>
             </article>
 
@@ -755,8 +801,10 @@
                   <span class="faq-icon" aria-hidden="true"></span>
                 </button>
               </h3>
-              <div class="faq-panel" id="faq-panel-3" hidden>
-                <p>No. You can start using TimeUp Lock immediately.</p>
+              <div class="faq-panel" id="faq-panel-3" aria-hidden="true">
+                <div class="faq-panel__inner">
+                  <p>No. You can start using TimeUp Lock immediately.</p>
+                </div>
               </div>
             </article>
 
@@ -772,8 +820,10 @@
                   <span class="faq-icon" aria-hidden="true"></span>
                 </button>
               </h3>
-              <div class="faq-panel" id="faq-panel-4" hidden>
-                <p>Yes. Use the built-in presets or create a custom timer.</p>
+              <div class="faq-panel" id="faq-panel-4" aria-hidden="true">
+                <div class="faq-panel__inner">
+                  <p>Yes. Use the built-in presets or create a custom timer.</p>
+                </div>
               </div>
             </article>
 
@@ -789,8 +839,10 @@
                   <span class="faq-icon" aria-hidden="true"></span>
                 </button>
               </h3>
-              <div class="faq-panel" id="faq-panel-5" hidden>
-                <p>Yes. The timer keeps running even if another app is open.</p>
+              <div class="faq-panel" id="faq-panel-5" aria-hidden="true">
+                <div class="faq-panel__inner">
+                  <p>Yes. The timer keeps running even if another app is open.</p>
+                </div>
               </div>
             </article>
           </div>
@@ -833,9 +885,8 @@
         <div class="site-footer__meta">
           <h2 class="site-footer__title">Contact</h2>
           <p><a href="mailto:appmist.in@gmail.com">appmist.in@gmail.com</a></p>
-          <p class="site-footer__copyright">
-            <span data-current-year></span> Appmist. All rights reserved.
-          </p>
+          <p class="site-footer__copyright">&copy; 2026 Appmist. All rights reserved.</p>
+          <p class="site-footer__note">Made with care in India.</p>
         </div>
       </div>
     </footer>
@@ -856,7 +907,7 @@
             aria-label="Close screenshot preview"
             data-screenshot-modal-close
           >
-            <span aria-hidden="true">×</span>
+            <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="image-modal__body">
