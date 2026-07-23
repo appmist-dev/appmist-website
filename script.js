@@ -1,335 +1,312 @@
-/*
- * Appmist Website Script
- * Lightweight shared interactions for navigation, reveal animations,
- * FAQ accordion, and homepage phone mockup state.
+/* ==========================================================================
+   AppMist - Interaction Scripts
+   ========================================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  initMobileMenu();
+  initHeaderScroll();
+  initFaqAccordion();
+  initScreenshotModal();
+  initScrollAnimations();
+  initBackToTop();
+  initSupportTabs();
+  initTimerSimulation();
+});
+
+/**
+ * 1. Dark/Light Theme Switcher
+ * Persistence: LocalStorage
+ * Default: System Preference (Prefers-color-scheme)
  */
+function initTheme() {
+  const themeToggle = document.getElementById('theme-toggle');
+  if (!themeToggle) return;
 
-(function () {
-  "use strict";
+  const currentTheme = localStorage.getItem('theme');
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-  var body = document.body;
-  var header = document.querySelector("[data-site-header]");
-  var nav = document.querySelector("[data-site-nav]");
-  var navToggle = document.querySelector("[data-nav-toggle]");
-  var yearTargets = document.querySelectorAll("[data-current-year]");
-  var mobileBreakpoint = window.matchMedia("(min-width: 48rem)");
-  var revealTargets = document.querySelectorAll("[data-reveal]");
-  var faqTriggers = document.querySelectorAll(".faq-trigger");
-  var presetButtons = document.querySelectorAll("[data-preset]");
-  var phoneTimer = document.querySelector("[data-phone-timer]");
-  var phonePresetChips = document.querySelectorAll("[data-phone-chip]");
-  var brandLogos = document.querySelectorAll("[data-brand-logo]");
-  var playStoreLinks = document.querySelectorAll("[data-play-store-link]");
-  var playStoreUrl = body.getAttribute("data-play-store-url");
-  var screenshotModal = document.querySelector("[data-screenshot-modal]");
-  var screenshotModalImage = document.querySelector("[data-screenshot-modal-image]");
-  var screenshotModalTriggers = document.querySelectorAll("[data-screenshot-modal-trigger]");
-  var screenshotModalCloseTargets = document.querySelectorAll("[data-screenshot-modal-close]");
-  var lastFocusedTrigger = null;
-
-  function setupBrandLogos() {
-    if (!brandLogos.length) {
-      return;
+  // Apply default theme
+  if (currentTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else if (currentTheme === 'dark') {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
+    // If no preference stored, follow system
+    if (!systemPrefersDark) {
+      document.documentElement.setAttribute('data-theme', 'light');
     }
+  }
 
-    brandLogos.forEach(function (logo) {
-      var parent = logo.closest(".brand-mark");
+  // Toggle button click listener
+  themeToggle.addEventListener('click', () => {
+    let theme = 'dark';
+    if (document.documentElement.getAttribute('data-theme') === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      theme = 'light';
+    }
+    localStorage.setItem('theme', theme);
+  });
+}
 
-      function showFallback() {
-        if (!parent) {
-          return;
+/**
+ * 2. Mobile Menu Drawer Navigation
+ * Actions: Toggle menu, click outline closure, close on navigation click
+ */
+function initMobileMenu() {
+  const toggleBtn = document.getElementById('mobile-nav-toggle');
+  const navMenu = document.getElementById('nav-menu');
+
+  if (!toggleBtn || !navMenu) return;
+
+  const toggleMenu = () => {
+    const isExpanded = toggleBtn.classList.contains('active');
+    toggleBtn.classList.toggle('active');
+    navMenu.classList.toggle('active');
+    toggleBtn.setAttribute('aria-expanded', !isExpanded);
+  };
+
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && e.target !== toggleBtn) {
+      toggleMenu();
+    }
+  });
+
+  // Close menu when clicking a menu link
+  const menuLinks = navMenu.querySelectorAll('a');
+  menuLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (navMenu.classList.contains('active')) {
+        toggleMenu();
+      }
+    });
+  });
+}
+
+/**
+ * 3. Sticky Navigation Header Effect
+ */
+function initHeaderScroll() {
+  const header = document.getElementById('header');
+  if (!header) return;
+
+  const checkScroll = () => {
+    if (window.scrollY > 40) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  };
+
+  window.addEventListener('scroll', checkScroll);
+  checkScroll(); // Initial load check
+}
+
+/**
+ * 4. FAQ Accordion Animation Handler
+ */
+function initFaqAccordion() {
+  const faqItems = document.querySelectorAll('.faq-item');
+  
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer');
+    if (!question || !answer) return;
+
+    question.addEventListener('click', () => {
+      const isActive = item.classList.contains('active');
+      
+      // Close other accordion items
+      faqItems.forEach(otherItem => {
+        if (otherItem !== item && otherItem.classList.contains('active')) {
+          otherItem.classList.remove('active');
+          const otherAnswer = otherItem.querySelector('.faq-answer');
+          if (otherAnswer) otherAnswer.style.maxHeight = '0px';
+          otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
         }
+      });
 
-        parent.classList.remove("is-logo-ready");
+      // Toggle current accordion item
+      if (isActive) {
+        item.classList.remove('active');
+        answer.style.maxHeight = '0px';
+        question.setAttribute('aria-expanded', 'false');
+      } else {
+        item.classList.add('active');
+        // Calculate raw scrollHeight to animate correctly
+        answer.style.maxHeight = `${answer.scrollHeight}px`;
+        question.setAttribute('aria-expanded', 'true');
       }
+    });
+  });
+}
 
-      function showLogo() {
-        if (!parent) {
-          return;
+/**
+ * 5. Screenshot Modal (Pure Node Cloning for Crisp Displays)
+ */
+function initScreenshotModal() {
+  const zoomablePhones = document.querySelectorAll('[data-zoomable]');
+  const modal = document.getElementById('screenshot-modal');
+  const modalWrapper = document.getElementById('modal-content-container');
+  const closeBtn = document.getElementById('modal-close-btn');
+
+  if (!modal || !modalWrapper || !closeBtn) return;
+
+  const openModal = (phoneNode) => {
+    // Clone mockup markup to preserve interactive styling elements
+    const clone = phoneNode.cloneNode(true);
+    // Remove individual scale effects from clone to keep it centered
+    clone.style.transform = 'none';
+    clone.style.pointerEvents = 'none';
+    clone.removeAttribute('data-zoomable');
+
+    modalWrapper.innerHTML = '';
+    modalWrapper.appendChild(clone);
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Stop background scrolling
+    closeBtn.focus();
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    modalWrapper.innerHTML = '';
+  };
+
+  zoomablePhones.forEach(phone => {
+    phone.addEventListener('click', () => openModal(phone));
+    
+    // Accessibility support: open mockup on keyboard Enter
+    phone.setAttribute('tabindex', '0');
+    phone.setAttribute('role', 'button');
+    phone.setAttribute('aria-label', 'Enlarge screenshot mockup');
+    phone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal(phone);
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  
+  // Close modal when clicking overlay
+  modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+}
+
+/**
+ * 6. Scroll-Triggered Reveal Animations
+ */
+function initScrollAnimations() {
+  const reveals = document.querySelectorAll('.reveal');
+  if (reveals.length === 0) return;
+
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target); // Trigger once only
+      }
+    });
+  }, observerOptions);
+
+  reveals.forEach(el => observer.observe(el));
+}
+
+/**
+ * 7. Back-to-Top Navigation Button
+ */
+function initBackToTop() {
+  const btn = document.getElementById('back-to-top');
+  if (!btn) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+}
+
+/**
+ * 8. OEM Battery Optimization Guides Tabs Controller
+ */
+function initSupportTabs() {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  if (tabButtons.length === 0) return;
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.getAttribute('data-tab');
+
+      // Update button selection state
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update content visibilities
+      tabContents.forEach(content => {
+        if (content.id === `${targetTab}-tab`) {
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
         }
-
-        parent.classList.add("is-logo-ready");
-      }
-
-      logo.addEventListener("load", showLogo);
-      logo.addEventListener("error", showFallback);
-
-      if (logo.complete && logo.naturalWidth > 0) {
-        showLogo();
-      } else if (logo.complete) {
-        showFallback();
-      }
-    });
-  }
-
-  function setCurrentYear() {
-    var currentYear = new Date().getFullYear();
-
-    yearTargets.forEach(function (element) {
-      element.textContent = currentYear;
-    });
-  }
-
-  function setupPlayStoreLinks() {
-    if (!playStoreLinks.length || !playStoreUrl) {
-      return;
-    }
-
-    playStoreLinks.forEach(function (link) {
-      link.setAttribute("href", playStoreUrl);
-    });
-  }
-
-  function updateHeaderState() {
-    if (!header) {
-      return;
-    }
-
-    if (window.scrollY > 12) {
-      header.classList.add("is-scrolled");
-      return;
-    }
-
-    header.classList.remove("is-scrolled");
-  }
-
-  function closeNavigation() {
-    if (!nav || !navToggle) {
-      return;
-    }
-
-    nav.classList.remove("is-open");
-    navToggle.setAttribute("aria-expanded", "false");
-    navToggle.setAttribute("aria-label", "Open navigation menu");
-    body.classList.remove("nav-open");
-  }
-
-  function toggleNavigation() {
-    if (!nav || !navToggle) {
-      return;
-    }
-
-    var isOpen = nav.classList.toggle("is-open");
-    navToggle.setAttribute("aria-expanded", String(isOpen));
-    navToggle.setAttribute(
-      "aria-label",
-      isOpen ? "Close navigation menu" : "Open navigation menu"
-    );
-    body.classList.toggle("nav-open", isOpen);
-  }
-
-  function handleBreakpointChange(event) {
-    if (event.matches) {
-      closeNavigation();
-    }
-  }
-
-  function setupReveal() {
-    if (!("IntersectionObserver" in window) || !revealTargets.length) {
-      revealTargets.forEach(function (element) {
-        element.classList.add("is-visible");
-      });
-      return;
-    }
-
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        });
-      },
-      {
-        threshold: 0.18,
-        rootMargin: "0px 0px -40px 0px"
-      }
-    );
-
-    revealTargets.forEach(function (element) {
-      observer.observe(element);
-    });
-  }
-
-  function toggleFaq(trigger) {
-    var isExpanded = trigger.getAttribute("aria-expanded") === "true";
-    var panelId = trigger.getAttribute("aria-controls");
-    var panel = panelId ? document.getElementById(panelId) : null;
-    var faqItem = trigger.closest(".faq-item");
-
-    if (!panel) {
-      return;
-    }
-
-    faqTriggers.forEach(function (item) {
-      var itemPanelId = item.getAttribute("aria-controls");
-      var itemPanel = itemPanelId ? document.getElementById(itemPanelId) : null;
-      var itemFaq = item.closest(".faq-item");
-
-      item.setAttribute("aria-expanded", "false");
-
-      if (itemPanel) {
-        itemPanel.setAttribute("aria-hidden", "true");
-      }
-
-      if (itemFaq) {
-        itemFaq.classList.remove("is-open");
-      }
-    });
-
-    if (!isExpanded) {
-      trigger.setAttribute("aria-expanded", "true");
-      panel.setAttribute("aria-hidden", "false");
-
-      if (faqItem) {
-        faqItem.classList.add("is-open");
-      }
-    }
-  }
-
-  function formatTimer(minutes) {
-    var padded = String(minutes).padStart(2, "0");
-    return padded + ":00";
-  }
-
-  function updatePhonePreset(button) {
-    if (!button || !phoneTimer) {
-      return;
-    }
-
-    var minutes = button.getAttribute("data-preset");
-
-    presetButtons.forEach(function (item) {
-      item.classList.toggle("is-active", item === button);
-      item.setAttribute("aria-pressed", String(item === button));
-    });
-
-    phonePresetChips.forEach(function (item) {
-      item.classList.toggle("is-active", item.getAttribute("data-phone-chip") === minutes);
-    });
-
-    phoneTimer.textContent = formatTimer(minutes);
-  }
-
-  function openScreenshotModal(trigger) {
-    if (!screenshotModal || !screenshotModalImage || !trigger) {
-      return;
-    }
-
-    var src = trigger.getAttribute("data-screenshot-src");
-    var alt = trigger.getAttribute("data-screenshot-alt") || "";
-
-    screenshotModalImage.setAttribute("src", src);
-    screenshotModalImage.setAttribute("alt", alt);
-    screenshotModal.hidden = false;
-    body.classList.add("modal-open");
-    lastFocusedTrigger = trigger;
-    document.body.style.overflow = "hidden";
-
-    var closeButton = screenshotModal.querySelector(".image-modal__close");
-
-    if (closeButton) {
-      closeButton.focus();
-    }
-  }
-
-  function closeScreenshotModal() {
-    if (!screenshotModal || screenshotModal.hidden) {
-      return;
-    }
-
-    screenshotModal.hidden = true;
-    body.classList.remove("modal-open");
-    document.body.style.overflow = "";
-
-    if (screenshotModalImage) {
-      screenshotModalImage.setAttribute("src", "");
-      screenshotModalImage.setAttribute("alt", "");
-    }
-
-    if (lastFocusedTrigger) {
-      lastFocusedTrigger.focus();
-    }
-  }
-
-  function bindEvents() {
-    if (navToggle) {
-      navToggle.addEventListener("click", toggleNavigation);
-    }
-
-    window.addEventListener("scroll", updateHeaderState, { passive: true });
-    window.addEventListener("resize", updateHeaderState);
-
-    if (mobileBreakpoint.addEventListener) {
-      mobileBreakpoint.addEventListener("change", handleBreakpointChange);
-    } else if (mobileBreakpoint.addListener) {
-      mobileBreakpoint.addListener(handleBreakpointChange);
-    }
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        closeNavigation();
-        closeScreenshotModal();
-      }
-    });
-
-    document.addEventListener("click", function (event) {
-      if (!nav || !navToggle || mobileBreakpoint.matches) {
-        return;
-      }
-
-      var clickedInsideNav = nav.contains(event.target);
-      var clickedToggle = navToggle.contains(event.target);
-
-      if (!clickedInsideNav && !clickedToggle) {
-        closeNavigation();
-      }
-    });
-
-    faqTriggers.forEach(function (trigger) {
-      trigger.addEventListener("click", function () {
-        toggleFaq(trigger);
       });
     });
+  });
+}
 
-    presetButtons.forEach(function (button) {
-      button.setAttribute("aria-pressed", String(button.classList.contains("is-active")));
-      button.addEventListener("click", function () {
-        updatePhonePreset(button);
-      });
+/**
+ * 9. Active Countdown Timer Simulation (Second-by-Second Decrement)
+ */
+function initTimerSimulation() {
+  const initialSeconds = 14 * 60 + 52; // 14:52
+  let currentSeconds = initialSeconds;
+
+  setInterval(() => {
+    currentSeconds--;
+    if (currentSeconds < 0) {
+      currentSeconds = initialSeconds; // Reset/loop countdown
+    }
+
+    const minutes = Math.floor(currentSeconds / 60);
+    const seconds = currentSeconds % 60;
+    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    // Select and update all countdown-time elements (in both main body and modal clones)
+    const timeElements = document.querySelectorAll('.countdown-time');
+    timeElements.forEach(el => {
+      el.textContent = formattedTime;
     });
-
-    screenshotModalTriggers.forEach(function (trigger) {
-      trigger.addEventListener("click", function () {
-        openScreenshotModal(trigger);
-      });
-    });
-
-    screenshotModalCloseTargets.forEach(function (target) {
-      target.addEventListener("click", closeScreenshotModal);
-    });
-  }
-
-  function init() {
-    setupBrandLogos();
-    setupPlayStoreLinks();
-    setCurrentYear();
-    updateHeaderState();
-    setupReveal();
-    faqTriggers.forEach(function (trigger) {
-      var panelId = trigger.getAttribute("aria-controls");
-      var panel = panelId ? document.getElementById(panelId) : null;
-      var expanded = trigger.getAttribute("aria-expanded") === "true";
-
-      if (panel) {
-        panel.setAttribute("aria-hidden", expanded ? "false" : "true");
-      }
-    });
-    bindEvents();
-  }
-
-  init();
-})();
+  }, 1000);
+}
